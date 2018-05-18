@@ -1,0 +1,12 @@
+version: "3"
+services:
+  php-fpm:
+    volumes:
+      - app_source:/var/www:nocopy
+  nginx:    
+    volumes:
+      - app_source:/var/www:nocopy
+
+volumes:
+  app_source:
+    external: true

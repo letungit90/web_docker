@@ -1,0 +1,45 @@
+version: '3'
+services:
+  php-fpm:
+    build: ./php-fpm
+    container_name: docker-php-fpm
+    volumes:
+      - ./php-fpm/develop/docker-php-ext-opcache.ini:/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
+      - ./php-fpm/develop/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      - ./php-fpm/develop/zzz-dev-docker.conf:/usr/local/etc/php-fpm.d/zzz-dev-docker.conf
+      - ./app_source:/var/www
+    env_file:
+      - ./.env
+
+  redis:
+    image: redis:3.2.10
+    container_name: docker-redis
+    ports:
+      - "6666:6379"
+
+  mysql:
+    image: mysql:5.7.12
+    container_name: docker-mysql
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+#      - ./data/mysql-init/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - ./data/mysql:/var/lib/mysql
+    ports:
+      - "3333:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: "${MYSQL_TIME_ZONE}"
+
+  nginx:
+    build: ./nginx
+    container_name: docker-nginx
+    volumes:
+      - ./app_source:/var/www
+    ports:
+      - "8888:80"
+    depends_on:
+      - php-fpm
+    links:
+      - php-fpm
+      - redis
+      - mysql

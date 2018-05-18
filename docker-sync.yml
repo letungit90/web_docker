@@ -1,0 +1,9 @@
+version: '2'
+
+options:
+  verbose: false
+syncs:
+  app_source:
+    src: './app_source'
+    sync_userid: '33'
+    sync_excludes: ['.DS_Store', '.idea', '.git']
