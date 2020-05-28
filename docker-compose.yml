@@ -1,5 +1,11 @@
 version: '3'
 services:
+#  ruby:
+#    build: ./ruby
+#    container_name: docker-ruby
+#    volumes:
+#      - ./app_source:/var/www
+
   php-fpm:
     build: ./php-fpm
     container_name: docker-php-fpm
@@ -17,8 +23,14 @@ services:
     ports:
       - "6666:6379"
 
+  memcached:
+    image: memcached:1.6.6-alpine
+    container_name: docker-memcached
+    ports:
+      - "11211:11211"
+
   mysql:
-    image: mysql:5.7.12
+    build: ./mysql
     container_name: docker-mysql
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
